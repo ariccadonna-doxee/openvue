@@ -8,9 +8,9 @@
             :class="[cx('pcInputText'), inputClass]"
             :style="inputStyle"
             :defaultValue="formattedValue"
-            :aria-valuemin="min"
-            :aria-valuemax="max"
-            :aria-valuenow="d_value"
+            :aria-valuemin="ariaValueMin"
+            :aria-valuemax="ariaValueMax"
+            :aria-valuenow="ariaValueNow"
             :inputmode="mode === 'decimal' && !minFractionDigits ? 'numeric' : 'decimal'"
             :disabled="disabled"
             :readonly="readonly"
@@ -97,7 +97,11 @@ import AngleDownIcon from '@openvue/icons/angledown';
 import AngleUpIcon from '@openvue/icons/angleup';
 import TimesIcon from '@openvue/icons/times';
 import InputText from 'openvue/inputtext';
+import { addDecimal, compareDecimal, toDecimalString } from './InputNumberDecimal';
 import BaseInputNumber from './BaseInputNumber.vue';
+
+// Transient typing state: a minus with no significant digit yet.
+const NEGATIVE_ZERO = '-0';
 
 export default {
     name: 'InputNumber',
@@ -274,9 +278,15 @@ export default {
                     return value;
                 }
 
+                // Intl.NumberFormat accepts decimal strings and formats them exactly, so the
+                // value never passes through a double and keeps every digit the user typed.
+                // '-0' is left alone: it is a transient state on the way to a negative fraction,
+                // and canonicalizing it to '0' would drop the minus the user just typed.
+                const decimalValue = value === NEGATIVE_ZERO ? value : (toDecimalString(value) ?? value);
+
                 if (this.format) {
                     let formatter = new Intl.NumberFormat(this.locale, this.getOptions());
-                    let formattedValue = formatter.format(value);
+                    let formattedValue = formatter.format(decimalValue);
 
                     if (this.prefix) {
                         formattedValue = this.prefix + formattedValue;
@@ -289,7 +299,7 @@ export default {
                     return formattedValue;
                 }
 
-                return value.toString();
+                return decimalValue.toString();
             }
 
             return '';
@@ -311,9 +321,13 @@ export default {
                     // Minus sign
                     return filteredText;
 
-                let parsedValue = +filteredText;
+                // Kept as a canonical decimal string rather than converted with +filteredText,
+                // which would round anything beyond Number.MAX_SAFE_INTEGER.
+                const decimalValue = toDecimalString(filteredText);
 
-                return isNaN(parsedValue) ? null : parsedValue;
+                // Preserve the sign of a negative zero so the minus survives until the user
+                // types the fraction; every path that reaches the model canonicalizes it away.
+                return decimalValue === '0' && filteredText.startsWith('-') ? NEGATIVE_ZERO : decimalValue;
             }
 
             return null;
@@ -332,28 +346,27 @@ export default {
 
             this.spin(event, dir);
         },
-        addWithPrecision(base, increment) {
-            const baseStr = base.toString();
-            const stepStr = increment.toString();
-
-            const baseDecimalPlaces = baseStr.includes('.') ? baseStr.split('.')[1].length : 0;
-            const stepDecimalPlaces = stepStr.includes('.') ? stepStr.split('.')[1].length : 0;
-
-            const maxDecimalPlaces = Math.max(baseDecimalPlaces, stepDecimalPlaces);
-            const precision = Math.pow(10, maxDecimalPlaces);
-
-            return Math.round((base + increment) * precision) / precision;
-        },
         spin(event, dir) {
             if (this.$refs.input) {
-                let step = this.step * dir;
-                let currentValue = this.parseValue(this.$refs.input.$el.value) || 0;
-                let newValue = this.validateValue(this.addWithPrecision(currentValue, step));
+                // Exact decimal addition: stepping by 0.1 stays on 0.1 boundaries however many
+                // times it is repeated, and large values do not drift.
+                let step = toDecimalString(this.step) ?? '0';
+
+                if (dir < 0) {
+                    step = step.startsWith('-') ? step.slice(1) : `-${step}`;
+                }
+
+                let formattedValue = this.$refs.input.$el.value;
+                let parsedValue = this.parseValue(formattedValue);
+                let currentValue = parsedValue === null || parsedValue === '-' ? '0' : parsedValue;
+                let newValue = this.validateValue(addDecimal(currentValue, step));
 
                 this.updateInput(newValue, null, 'spin');
                 this.updateModel(event, newValue);
 
-                this.handleOnInput(event, currentValue, newValue);
+                // The formatted text, not the parsed decimal: handleOnInput re-parses a string
+                // through the locale parser, which would mangle '10.5' in group-separator-'.' locales.
+                this.handleOnInput(event, formattedValue, newValue);
             }
         },
         onUpButtonMouseDown(event) {
@@ -517,7 +530,7 @@ export default {
                                 newValueStr = inputValue.slice(0, selectionStart - 1) + insertedText + inputValue.slice(selectionStart);
                             } else if (decimalCharIndexWithoutPrefix === 1) {
                                 newValueStr = inputValue.slice(0, selectionStart - 1) + '0' + inputValue.slice(selectionStart);
-                                newValueStr = this.parseValue(newValueStr) > 0 ? newValueStr : '';
+                                newValueStr = compareDecimal(this.parseValue(newValueStr), 0) === 1 ? newValueStr : '';
                             } else {
                                 newValueStr = inputValue.slice(0, selectionStart - 1) + inputValue.slice(selectionStart);
                             }
@@ -559,7 +572,7 @@ export default {
                                 newValueStr = inputValue.slice(0, selectionStart) + insertedText + inputValue.slice(selectionStart + 1);
                             } else if (decimalCharIndexWithoutPrefix === 1) {
                                 newValueStr = inputValue.slice(0, selectionStart) + '0' + inputValue.slice(selectionStart + 1);
-                                newValueStr = this.parseValue(newValueStr) > 0 ? newValueStr : '';
+                                newValueStr = compareDecimal(this.parseValue(newValueStr), 0) === 1 ? newValueStr : '';
                             } else {
                                 newValueStr = inputValue.slice(0, selectionStart) + inputValue.slice(selectionStart + 1);
                             }
@@ -636,7 +649,7 @@ export default {
             this.$refs.input.$el.focus();
         },
         allowMinusSign() {
-            return this.min === null || this.min < 0;
+            return this.min === null || compareDecimal(this.min, 0) === -1;
         },
         isMinusSign(char) {
             if (this._minusSign.test(char) || char === '-') {
@@ -861,8 +874,12 @@ export default {
         },
         handleOnInput(event, currentValue, newValue) {
             if (this.isValueChanged(currentValue, newValue)) {
-                this.$emit('input', { originalEvent: event, value: newValue, formattedValue: currentValue });
-                this.formField.onInput?.({ originalEvent: event, value: newValue });
+                // Shaped like the model value so both carry the same type; a lone minus sign is a
+                // transient typing state rather than a value, so it is passed through untouched.
+                const emittedValue = newValue === '-' ? newValue : this.toModelValue(newValue);
+
+                this.$emit('input', { originalEvent: event, value: emittedValue, formattedValue: currentValue });
+                this.formField.onInput?.({ originalEvent: event, value: emittedValue });
             }
         },
         isValueChanged(currentValue, newValue) {
@@ -871,9 +888,10 @@ export default {
             }
 
             if (newValue != null) {
-                let parsedCurrentValue = typeof currentValue === 'string' ? this.parseValue(currentValue) : currentValue;
+                let parsedCurrentValue = typeof currentValue === 'string' ? this.parseValue(currentValue) : toDecimalString(currentValue);
 
-                return newValue !== parsedCurrentValue;
+                // compareDecimal is null when either side is not a decimal, which counts as changed.
+                return compareDecimal(newValue, parsedCurrentValue) !== 0;
             }
 
             return false;
@@ -883,15 +901,23 @@ export default {
                 return null;
             }
 
-            if (this.min != null && value < this.min) {
-                return this.min;
+            const decimalValue = toDecimalString(value);
+
+            if (decimalValue === null) {
+                return null;
             }
 
-            if (this.max != null && value > this.max) {
-                return this.max;
+            // Clamping compares decimals exactly, so a bound beyond the safe-integer range
+            // is honoured instead of being rounded to the nearest double first.
+            if (this.min != null && compareDecimal(decimalValue, this.min) === -1) {
+                return toDecimalString(this.min);
             }
 
-            return value;
+            if (this.max != null && compareDecimal(decimalValue, this.max) === 1) {
+                return toDecimalString(this.max);
+            }
+
+            return decimalValue;
         },
         updateInput(value, insertedValueStr, operation, valueStr) {
             insertedValueStr = insertedValueStr || '';
@@ -999,8 +1025,43 @@ export default {
 
             return 0;
         },
+        /**
+         * Shapes the internal decimal string into the value handed to the consumer.
+         *
+         * 'auto' (default) emits a number whenever that number round-trips back to the same
+         * decimal string, and falls back to the decimal string when it does not, so existing
+         * consumers keep receiving numbers and no digit the user typed is ever dropped. Note
+         * this is about representing the value, not about later arithmetic: 0.1 round-trips
+         * and is emitted as a number, yet adding it repeatedly still drifts in consumer code.
+         * 'number' and 'string' pin the type; 'number' accepts the rounding that comes with it.
+         */
+        toModelValue(value) {
+            if (value === null || value === undefined || value === '-') {
+                return null;
+            }
+
+            const decimalValue = toDecimalString(value);
+
+            if (decimalValue === null) {
+                return null;
+            }
+
+            if (this.modelValueType === 'string') {
+                return decimalValue;
+            }
+
+            // The round trip back through toDecimalString is what proves the double kept every digit.
+            const asNumber = Number(decimalValue);
+            const isExact = toDecimalString(asNumber) === decimalValue;
+
+            if (this.modelValueType === 'number') {
+                return asNumber;
+            }
+
+            return isExact ? asNumber : decimalValue;
+        },
         updateModel(event, value) {
-            this.writeValue(value, event);
+            this.writeValue(this.toModelValue(value), event);
         },
         onInputFocus(event) {
             this.focused = true;
@@ -1034,13 +1095,30 @@ export default {
             }
         },
         maxBoundry() {
-            return this.d_value >= this.max;
+            // compareDecimal returns null for an empty or non-numeric value; guard it explicitly
+            // because `null >= 0` would otherwise read as "at the boundary" and disable the button.
+            const comparison = compareDecimal(this.d_value, this.max);
+
+            return comparison !== null && comparison >= 0;
         },
         minBoundry() {
-            return this.d_value <= this.min;
+            const comparison = compareDecimal(this.d_value, this.min);
+
+            return comparison !== null && comparison <= 0;
         }
     },
     computed: {
+        // Assistive tech reads these, so they carry plain expanded decimals rather than whatever
+        // notation the consumer happened to pass ('007', '1e3') or Number#toString produced ('1e+21').
+        ariaValueMin() {
+            return toDecimalString(this.min);
+        },
+        ariaValueMax() {
+            return toDecimalString(this.max);
+        },
+        ariaValueNow() {
+            return toDecimalString(this.d_value);
+        },
         upButtonListeners() {
             return {
                 mousedown: (event) => this.onUpButtonMouseDown(event),

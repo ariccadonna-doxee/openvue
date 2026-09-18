@@ -15,6 +15,15 @@ import { VNode } from 'vue';
 
 export declare type RoundingMode = 'ceil' | 'floor' | 'expand' | 'trunc' | 'halfCeil' | 'halfFloor' | 'halfExpand' | 'halfTrunc' | 'halfEven';
 
+/**
+ * A numeric value accepted by InputNumber.
+ *
+ * Strings are read as exact decimals, so values that a double cannot hold — anything beyond
+ * Number.MAX_SAFE_INTEGER, or a fraction with more significant digits than a double carries —
+ * keep every digit the user typed.
+ */
+export declare type InputNumberValue = number | string;
+
 export declare type InputNumberPassThroughOptionType<T = any> = InputNumberPassThroughAttributes | ((options: InputNumberPassThroughMethodOptions<T>) => InputNumberPassThroughAttributes | string) | string | null | undefined;
 
 /**
@@ -148,14 +157,14 @@ export interface InputNumberPassThroughAttributes {
  */
 export interface InputNumberState {
     /**
-     * Current value state as a number.
+     * Current value state.
      * @deprecated since 4.2.0. Use 'd_value' instead.
      */
-    d_modelValue: number;
+    d_modelValue: InputNumberValue;
     /**
-     * Current value state as a number.
+     * Current value state. A decimal string when the value cannot be represented exactly as a number.
      */
-    d_value: number;
+    d_value: InputNumberValue;
     /**
      * Current focused state as a boolean.
      * @defaultValue false
@@ -200,12 +209,15 @@ export interface InputNumberButtonListeners {
 export interface InputNumberProps {
     /**
      * Value of the component.
+     *
+     * A string is treated as an exact decimal, which is how values beyond
+     * Number.MAX_SAFE_INTEGER are carried without losing digits.
      */
-    modelValue?: Nullable<number>;
+    modelValue?: Nullable<InputNumberValue>;
     /**
      * The default value for the input when not controlled by `modelValue`.
      */
-    defaultValue?: Nullable<number>;
+    defaultValue?: Nullable<InputNumberValue>;
     /**
      * The name attribute for the element, typically used in form submissions.
      */
@@ -305,18 +317,27 @@ export interface InputNumberProps {
      */
     roundingMode?: RoundingMode;
     /**
-     * Minimum boundary value.
+     * Minimum boundary value. A string is treated as an exact decimal.
      */
-    min?: number | undefined;
+    min?: InputNumberValue | undefined;
     /**
-     * Maximum boundary value.
+     * Maximum boundary value. A string is treated as an exact decimal.
      */
-    max?: number | undefined;
+    max?: InputNumberValue | undefined;
     /**
-     * Step factor to increment/decrement the value.
+     * Step factor to increment/decrement the value. A string is treated as an exact decimal.
      * @defaultValue 1
      */
-    step?: number | undefined;
+    step?: InputNumberValue | undefined;
+    /**
+     * Type of the emitted model value.
+     *
+     * - `auto`: a number whenever it represents the value exactly, otherwise a decimal string.
+     * - `number`: always a number; values beyond Number.MAX_SAFE_INTEGER are rounded.
+     * - `string`: always an exact decimal string.
+     * @defaultValue 'auto'
+     */
+    modelValueType?: 'auto' | 'number' | 'string' | undefined;
     /**
      * Determines whether the input field is empty.
      * @defaultValue true
@@ -469,14 +490,15 @@ export interface InputNumberSlots {
 export interface InputNumberEmitsOptions {
     /**
      * Emitted when the value changes.
-     * @param {number} value - New value.
+     * @param {InputNumberValue} value - New value. A decimal string when the value cannot be
+     * represented exactly as a number, unless `modelValueType` pins the type.
      */
-    'update:modelValue'(value: number): void;
+    'update:modelValue'(value: InputNumberValue): void;
     /**
      * Emitted when the value changes in uncontrolled mode.
-     * @param {number} value - New value.
+     * @param {InputNumberValue} value - New value.
      */
-    'value-change'(value: number): void;
+    'value-change'(value: InputNumberValue): void;
     /**
      * Callback to invoke when the value is entered.
      * @param {InputNumberInputEvent} event - Custom input event.

@@ -8,6 +8,14 @@ All packages in this repository are released together under a single version.
 
 ## [Unreleased]
 
+### Fixed
+
+- `InputNumber` no longer changes the number you typed. Values past `Number.MAX_SAFE_INTEGER` were silently rounded, so `999999999999999999` came back as `1000000000000000000`, and stepping by `0.1` drifted off the decimal grid. Both are exact now. `modelValue`, `min`, `max` and `step` also accept a numeric string, which is how you pass a value a JavaScript number cannot hold. ([#490](https://github.com/openvi-foundation/openvue/issues/490))
+
+### Changed
+
+- **Breaking:** `InputNumber` emits a decimal string, rather than a rounded number, for values a JavaScript number cannot represent exactly. Anything a number already held exactly is still emitted as a number, so at runtime only the values that were previously being corrupted behave differently. In TypeScript, however, `update:modelValue` is now `number | string`, and a handler typed `(value: number)` will no longer compile. The new `modelValueType` prop pins the type: `"number"` restores the old behaviour and signature, rounding included, and `"string"` always gives you an exact decimal string.
+
 ## [1.0.0] - 2026-09-10
 
 The first stable release. The public API is what OpenVue commits to for the 1.x line, and the packages now publish under the `latest` dist-tag, so a plain `npm install openvue` gives you 1.0.0 instead of a prerelease. From here the project follows semantic versioning: additions go in minor releases, fixes in patch releases, and anything that breaks your code waits for 2.0.

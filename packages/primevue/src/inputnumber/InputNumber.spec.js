@@ -92,4 +92,105 @@ describe('InputNumber.vue', () => {
 
         expect(wrapper.find('input.p-inputnumber-input').element._value).toBe('%20');
     });
+
+    it('should step 0.1 without floating point drift', async () => {
+        // spin() reads the live input element, so each ArrowUp builds on the previous one.
+        await wrapper.setProps({ modelValue: 0, step: 0.1, minFractionDigits: 1 });
+
+        const input = wrapper.find('input.p-inputnumber-input').element;
+
+        for (let i = 0; i < 10; i++) {
+            await wrapper.vm.onInputKeyDown({ code: 'ArrowUp', target: input, preventDefault: () => {} });
+        }
+
+        const emitted = wrapper.emitted()['update:modelValue'].map(([value]) => value);
+
+        // Repeatedly adding 0.1 as a double drifts to 0.30000000000000004 and lands on
+        // 0.9999999999999999 instead of 1.
+        expect(emitted).toEqual([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]);
+    });
+
+    it('should preserve digits beyond Number.MAX_SAFE_INTEGER', async () => {
+        await wrapper.vm.onInputKeyDown({ code: 'Enter', target: { value: '123456789012345678' }, preventDefault: () => {} });
+
+        expect(wrapper.emitted()['update:modelValue'][0]).toEqual(['123456789012345678']);
+
+        await wrapper.vm.onInputKeyDown({ code: 'Enter', target: { value: '999999999999999999' }, preventDefault: () => {} });
+
+        expect(wrapper.emitted()['update:modelValue'][1]).toEqual(['999999999999999999']);
+    });
+
+    it('should step exactly beyond Number.MAX_SAFE_INTEGER', async () => {
+        await wrapper.setProps({ modelValue: '123456789012345678' });
+
+        await wrapper.vm.onInputKeyDown({ code: 'ArrowUp', target: { value: '123456789012345678' }, preventDefault: () => {} });
+
+        expect(wrapper.emitted()['update:modelValue'][0]).toEqual(['123456789012345679']);
+    });
+
+    it('should accept a string modelValue and render it exactly', async () => {
+        await wrapper.setProps({ modelValue: '123456789012345678', locale: 'en-US' });
+
+        expect(wrapper.find('input.p-inputnumber-input').element._value).toBe('123,456,789,012,345,678');
+    });
+
+    it('should clamp against string boundaries exactly', async () => {
+        await wrapper.setProps({ modelValue: '999999999999999998', max: '999999999999999999' });
+
+        await wrapper.vm.onInputKeyDown({ code: 'ArrowUp', target: { value: '999999999999999998' }, preventDefault: () => {} });
+
+        expect(wrapper.emitted()['update:modelValue'][0]).toEqual(['999999999999999999']);
+
+        await wrapper.vm.onInputKeyDown({ code: 'ArrowUp', target: { value: '999999999999999999' }, preventDefault: () => {} });
+
+        expect(wrapper.emitted()['update:modelValue'][1]).toEqual(['999999999999999999']);
+    });
+
+    it('should keep the minus sign after typing a negative zero', async () => {
+        // toDecimalString canonicalizes '-0' to '0'. The field must still show the minus, so a
+        // negative value stays reachable while typing.
+        await wrapper.setProps({ modelValue: null });
+
+        const input = wrapper.find('input.p-inputnumber-input').element;
+
+        input.setSelectionRange(0, 0);
+
+        await wrapper.vm.onInputKeyPress({ key: '-', preventDefault: () => {} });
+        await wrapper.vm.onInputKeyPress({ key: '0', preventDefault: () => {} });
+
+        expect(input.value).toBe('-0');
+    });
+
+    it('should emit a canonical zero for a typed negative zero', async () => {
+        // The transient '-0' never reaches the consumer.
+        await wrapper.vm.onInputKeyDown({ code: 'Enter', target: { value: '-0' }, preventDefault: () => {} });
+
+        expect(wrapper.emitted()['update:modelValue'][0]).toEqual([0]);
+    });
+
+    it('should not report a spurious change when spinning in a group-separator locale', async () => {
+        // parseValue strips '.' as a group separator in it-IT, so spin must hand handleOnInput
+        // the formatted text rather than the already-parsed decimal.
+        await wrapper.setProps({ modelValue: 10.5, locale: 'it-IT', max: 10.5, step: 1, minFractionDigits: 1 });
+
+        const input = wrapper.find('input.p-inputnumber-input').element;
+
+        await wrapper.vm.onInputKeyDown({ code: 'ArrowUp', target: input, preventDefault: () => {} });
+
+        expect(wrapper.emitted().input).toBeUndefined();
+    });
+
+    it('should honour modelValueType', async () => {
+        await wrapper.setProps({ modelValueType: 'string' });
+
+        await wrapper.vm.onInputKeyDown({ code: 'Enter', target: { value: '12' }, preventDefault: () => {} });
+
+        expect(wrapper.emitted()['update:modelValue'][0]).toEqual(['12']);
+
+        await wrapper.setProps({ modelValueType: 'number' });
+
+        await wrapper.vm.onInputKeyDown({ code: 'Enter', target: { value: '12' }, preventDefault: () => {} });
+
+        expect(wrapper.emitted()['update:modelValue'][1]).toEqual([12]);
+    });
 });
