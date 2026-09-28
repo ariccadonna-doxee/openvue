@@ -32,9 +32,9 @@ export default defineSchema({
                 'minFractionDigits',
                 'maxFractionDigits',
                 // typed number | string, the panel only needs the number
-                { prop: 'min', control: 'number', maxFractionDigits: 20 },
-                { prop: 'max', control: 'number', maxFractionDigits: 20 },
-                { prop: 'step', control: 'number', maxFractionDigits: 20 },
+                { prop: 'min', control: 'number' },
+                { prop: 'max', control: 'number' },
+                { prop: 'step', control: 'number' },
                 'allowEmpty',
                 'highlightOnFocus'
             ]
