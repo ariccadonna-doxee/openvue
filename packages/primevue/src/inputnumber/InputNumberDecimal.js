@@ -22,11 +22,22 @@ const DECIMAL_REGEX = /^[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$/;
 const MAX_DIGITS = 1000;
 
 /**
+ * The source text of a number, bigint or string, or '' for anything that cannot be numeric
+ * (including NaN and Infinity).
+ */
+function toText(value) {
+    if (typeof value === 'string') return value.trim();
+    if (typeof value === 'bigint' || (typeof value === 'number' && Number.isFinite(value))) return value.toString();
+
+    return '';
+}
+
+/**
  * Splits a number, bigint or numeric string into its canonical sign, integer digits and fraction
  * digits, expanding exponential notation. Returns null when the value is not numeric.
  */
 function split(value) {
-    const text = typeof value === 'bigint' ? value.toString() : typeof value === 'number' ? (Number.isFinite(value) ? value.toString() : '') : typeof value === 'string' ? value.trim() : '';
+    const text = toText(value);
 
     if (!DECIMAL_REGEX.test(text)) {
         return null;
@@ -88,6 +99,19 @@ export function toDecimalString(value) {
     }
 
     return decimal.fractionPart ? `${decimal.sign}${decimal.integerPart}.${decimal.fractionPart}` : decimal.sign + decimal.integerPart;
+}
+
+/**
+ * The decimal with its sign flipped, canonicalized, or null when the value is not numeric.
+ */
+export function negateDecimal(value) {
+    const decimal = toDecimalString(value);
+
+    if (decimal === null || decimal === '0') {
+        return decimal;
+    }
+
+    return decimal.startsWith('-') ? decimal.slice(1) : `-${decimal}`;
 }
 
 /**

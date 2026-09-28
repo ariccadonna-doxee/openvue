@@ -12,7 +12,7 @@
                     <Select v-else-if="control.control === 'select'" :id="id" v-model="state[control.prop]" :options="control.options" :placeholder="control.default == null ? 'Default' : ''" size="small" showClear fluid />
 
                     <!-- no floor unless the schema names one: plenty of numeric props read below zero, tabindex and a slider's own minimum among them -->
-                    <InputNumber v-else-if="control.control === 'number'" :inputId="id" v-model="state[control.prop]" :min="control.min" :max="control.max" :step="control.step" size="small" fluid />
+                    <InputNumber v-else-if="control.control === 'number'" :inputId="id" v-model="state[control.prop]" :min="control.min" :max="control.max" :step="control.step" :maxFractionDigits="control.maxFractionDigits" size="small" fluid />
 
                     <InputText v-else :id="id" v-model="state[control.prop]" size="small" placeholder="None" fluid />
                 </ControlRow>

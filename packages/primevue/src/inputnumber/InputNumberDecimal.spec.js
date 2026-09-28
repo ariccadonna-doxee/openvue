@@ -1,4 +1,4 @@
-import { addDecimal, compareDecimal, toDecimalString } from './InputNumberDecimal';
+import { addDecimal, compareDecimal, negateDecimal, toDecimalString } from './InputNumberDecimal';
 
 describe('decimal', () => {
     describe('toDecimalString', () => {
@@ -51,6 +51,25 @@ describe('decimal', () => {
             expect(toDecimalString(null)).toBeNull();
             expect(toDecimalString(undefined)).toBeNull();
             expect(toDecimalString({})).toBeNull();
+        });
+    });
+
+    describe('negateDecimal', () => {
+        it('should flip the sign exactly', () => {
+            expect(negateDecimal('0.1')).toBe('-0.1');
+            expect(negateDecimal('-0.1')).toBe('0.1');
+            expect(negateDecimal('999999999999999999')).toBe('-999999999999999999');
+            expect(negateDecimal(5)).toBe('-5');
+        });
+
+        it('should never sign zero', () => {
+            expect(negateDecimal('0')).toBe('0');
+            expect(negateDecimal('-0.00')).toBe('0');
+        });
+
+        it('should return null for non-numeric input', () => {
+            expect(negateDecimal('abc')).toBeNull();
+            expect(negateDecimal(null)).toBeNull();
         });
     });
 

@@ -101,13 +101,6 @@ export default {
             type: [Number, String],
             default: 1
         },
-        modelValueType: {
-            type: String,
-            default: 'auto',
-            validator(value) {
-                return ['auto', 'number', 'string'].includes(value);
-            }
-        },
         allowEmpty: {
             type: Boolean,
             default: true

@@ -10,11 +10,8 @@ All packages in this repository are released together under a single version.
 
 ### Fixed
 
-- `InputNumber` no longer changes the number you typed. Values past `Number.MAX_SAFE_INTEGER` were silently rounded, so `999999999999999999` came back as `1000000000000000000`, and stepping by `0.1` drifted off the decimal grid. Both are exact now. `modelValue`, `min`, `max` and `step` also accept a numeric string, which is how you pass a value a JavaScript number cannot hold. ([#490](https://github.com/openvi-foundation/openvue/issues/490))
-
-### Changed
-
-- **Breaking:** `InputNumber` emits a decimal string, rather than a rounded number, for values a JavaScript number cannot represent exactly. Anything a number already held exactly is still emitted as a number, so at runtime only the values that were previously being corrupted behave differently. In TypeScript, however, `update:modelValue` is now `number | string`, and a handler typed `(value: number)` will no longer compile. The new `modelValueType` prop pins the type: `"number"` restores the old behaviour and signature, rounding included, and `"string"` always gives you an exact decimal string.
+- `InputNumber` no longer changes the number you typed. Values past `Number.MAX_SAFE_INTEGER` were silently rounded, so `999999999999999999` came back as `1000000000000000000`. The value is now emitted as a number whenever a number holds it exactly, which covers everything that worked before, and as a decimal string only when a number would lose digits. The emitted type is still declared as `number`, so no code stops compiling. `modelValue`, `min`, `max` and `step` also accept a numeric string, which is how you pass a value a number cannot hold. ([#490](https://github.com/openvi-foundation/openvue/issues/490))
+- `InputNumber` emits the value the field shows. It is rounded to the field's fraction digits with its `roundingMode`, where it could previously carry more digits than were displayed, and kept within `Number.MAX_VALUE`, past which the field could only show `∞`. A very small `step` such as `0.0000001` now moves the value when `maxFractionDigits` is large enough to show it; it used to be rounded away. The `input` event emitted by the spinner buttons and arrow keys now carries the text shown before the change as `formattedValue`, as its type always said, instead of a number.
 
 ## [1.0.0] - 2026-09-10
 

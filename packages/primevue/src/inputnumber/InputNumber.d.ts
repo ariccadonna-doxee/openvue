@@ -157,14 +157,14 @@ export interface InputNumberPassThroughAttributes {
  */
 export interface InputNumberState {
     /**
-     * Current value state.
+     * Current value state as a number, or a decimal string when a number cannot hold the value exactly.
      * @deprecated since 4.2.0. Use 'd_value' instead.
      */
-    d_modelValue: InputNumberValue;
+    d_modelValue: number;
     /**
-     * Current value state. A decimal string when the value cannot be represented exactly as a number.
+     * Current value state as a number, or a decimal string when a number cannot hold the value exactly.
      */
-    d_value: InputNumberValue;
+    d_value: number;
     /**
      * Current focused state as a boolean.
      * @defaultValue false
@@ -330,15 +330,6 @@ export interface InputNumberProps {
      */
     step?: InputNumberValue | undefined;
     /**
-     * Type of the emitted model value.
-     *
-     * - `auto`: a number whenever it represents the value exactly, otherwise a decimal string.
-     * - `number`: always a number; values beyond Number.MAX_SAFE_INTEGER are rounded.
-     * - `string`: always an exact decimal string.
-     * @defaultValue 'auto'
-     */
-    modelValueType?: 'auto' | 'number' | 'string' | undefined;
-    /**
      * Determines whether the input field is empty.
      * @defaultValue true
      */
@@ -490,15 +481,14 @@ export interface InputNumberSlots {
 export interface InputNumberEmitsOptions {
     /**
      * Emitted when the value changes.
-     * @param {InputNumberValue} value - New value. A decimal string when the value cannot be
-     * represented exactly as a number, unless `modelValueType` pins the type.
+     * @param {number} value - New value. A decimal string when a number cannot hold it exactly, e.g. beyond Number.MAX_SAFE_INTEGER.
      */
-    'update:modelValue'(value: InputNumberValue): void;
+    'update:modelValue'(value: number): void;
     /**
      * Emitted when the value changes in uncontrolled mode.
-     * @param {InputNumberValue} value - New value.
+     * @param {number} value - New value. A decimal string when a number cannot hold it exactly, e.g. beyond Number.MAX_SAFE_INTEGER.
      */
-    'value-change'(value: InputNumberValue): void;
+    'value-change'(value: number): void;
     /**
      * Callback to invoke when the value is entered.
      * @param {InputNumberInputEvent} event - Custom input event.

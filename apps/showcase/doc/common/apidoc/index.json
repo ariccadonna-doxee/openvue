@@ -37761,18 +37761,18 @@
                             "name": "d_modelValue",
                             "optional": false,
                             "readonly": false,
-                            "type": "InputNumberValue",
+                            "type": "number",
                             "default": "",
-                            "description": "Current value state.",
+                            "description": "Current value state as a number, or a decimal string when a number cannot hold the value exactly.",
                             "deprecated": "since 4.2.0. Use 'd_value' instead."
                         },
                         {
                             "name": "d_value",
                             "optional": false,
                             "readonly": false,
-                            "type": "InputNumberValue",
+                            "type": "number",
                             "default": "",
-                            "description": "Current value state. A decimal string when the value cannot be represented exactly as a number."
+                            "description": "Current value state as a number, or a decimal string when a number cannot hold the value exactly."
                         },
                         {
                             "name": "focused",
@@ -38042,14 +38042,6 @@
                             "description": "Step factor to increment/decrement the value. A string is treated as an exact decimal."
                         },
                         {
-                            "name": "modelValueType",
-                            "optional": true,
-                            "readonly": false,
-                            "type": "\"string\" | \"number\" | \"auto\"",
-                            "default": "'auto'",
-                            "description": "Type of the emitted model value.\n\n-  `auto` : a number whenever it represents the value exactly, otherwise a decimal string.\n-  `number` : always a number; values beyond Number.MAX_SAFE_INTEGER are rounded.\n-  `string` : always an exact decimal string."
-                        },
-                        {
                             "name": "allowEmpty",
                             "optional": true,
                             "readonly": false,
@@ -38293,8 +38285,8 @@
                                 {
                                     "name": "value",
                                     "optional": false,
-                                    "type": "InputNumberValue",
-                                    "description": "New value. A decimal string when the value cannot be\nrepresented exactly as a number, unless  `modelValueType`  pins the type."
+                                    "type": "number",
+                                    "description": "New value. A decimal string when a number cannot hold it exactly, e.g. beyond Number.MAX_SAFE_INTEGER."
                                 }
                             ],
                             "returnType": "void",
@@ -38306,8 +38298,8 @@
                                 {
                                     "name": "value",
                                     "optional": false,
-                                    "type": "InputNumberValue",
-                                    "description": "New value."
+                                    "type": "number",
+                                    "description": "New value. A decimal string when a number cannot hold it exactly, e.g. beyond Number.MAX_SAFE_INTEGER."
                                 }
                             ],
                             "returnType": "void",

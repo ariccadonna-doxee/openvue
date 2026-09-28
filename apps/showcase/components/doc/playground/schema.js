@@ -116,7 +116,7 @@ function parseDefault(raw, control) {
 /**
  * Builds a schema from a list of groups, each `{ title, controls: [...] }`. A control is a prop
  * name, or an object carrying overrides: `control`, `options`, `label`, `min`, `max`, `step`,
- * `when(state)` for a prop that only applies while another is set, and `seed` for the value the
+ * `maxFractionDigits`, `when(state)` for a prop that only applies while another is set, and `seed` for the value the
  * playground should open on.
  *
  * A seed is for a prop the component needs a value for before it is worth looking at — a Button
