@@ -1965,11 +1965,14 @@ export default {
             return date;
         },
         populateTime(value, timeString, ampm) {
-            if (this.hourFormat == '12' && !ampm) {
-                throw 'Invalid Time';
+            if (this.hourFormat == '12') {
+                if (!ampm) {
+                    throw 'Invalid Time';
+                }
+
+                this.pm = ampm.toLowerCase() === this.$primevue.config.locale.pm.toLowerCase() || ampm.toLowerCase() === 'pm';
             }
 
-            this.pm = ampm.toLowerCase() === this.$primevue.config.locale.pm.toLowerCase() || ampm.toLowerCase() === 'pm';
             let time = this.parseTime(timeString);
 
             value.setHours(time.hour);

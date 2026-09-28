@@ -121,4 +121,40 @@ describe('DatePicker.vue', () => {
 
         expect(wrapper.find('.p-datepicker-decade').text()).toBe('1980 - 1989');
     });
+
+    it('should populate the time when typing a 24-hour value', async () => {
+        await wrapper.setProps({ showTime: true, hourFormat: '24' });
+
+        const input = wrapper.find('.p-datepicker-input');
+
+        await input.setValue('06/15/1988 14:30');
+
+        const emitted = wrapper.emitted('update:modelValue');
+
+        expect(emitted).toBeTruthy();
+
+        const value = emitted[emitted.length - 1][0];
+
+        expect(value.getHours()).toBe(14);
+        expect(value.getMinutes()).toBe(30);
+        expect(wrapper.vm.pm).toBeNull();
+    });
+
+    it('should populate the time when typing a 12-hour value', async () => {
+        await wrapper.setProps({ showTime: true, hourFormat: '12' });
+
+        const input = wrapper.find('.p-datepicker-input');
+
+        await input.setValue('06/15/1988 02:30 PM');
+
+        const emitted = wrapper.emitted('update:modelValue');
+
+        expect(emitted).toBeTruthy();
+
+        const value = emitted[emitted.length - 1][0];
+
+        expect(value.getHours()).toBe(14);
+        expect(value.getMinutes()).toBe(30);
+        expect(wrapper.vm.pm).toBe(true);
+    });
 });
