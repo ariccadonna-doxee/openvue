@@ -8,7 +8,7 @@
 const SITE_URL = 'https://openvue.dev';
 const SITE_NAME = 'OpenVue';
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.png`;
-const DEFAULT_DESCRIPTION = 'OpenVue is the MIT-licensed continuation of PrimeVue: 80+ accessible, themeable UI components for Vue 3 and Nuxt, with the same API you already know.';
+const DEFAULT_DESCRIPTION = 'OpenVue is an MIT-licensed fork of PrimeVue 4.5.5: 80+ accessible, themeable UI components for Vue 3 and Nuxt, with the same API you already know.';
 
 /* Canonical URLs are absolute, lower-cased and never carry a trailing slash (except the root). */
 function absoluteUrl(path) {

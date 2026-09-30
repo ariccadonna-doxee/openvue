@@ -4,7 +4,7 @@
     "require": {
         "php": "^8.2",
         "inertiajs/inertia-laravel": "2.0.24",
-        "laravel/framework": "12.64.0"
+        "laravel/framework": "12.69.3"
     },
     "autoload": {
         "psr-4": {

@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "author": "OpenVue Contributors",
     "description": "Nuxt module for PrimeVue",
-    "homepage": "https://github.com/openvi-foundation/openvue",
+    "homepage": "https://openvue.dev",
     "license": "MIT",
     "repository": {
         "type": "git",
@@ -20,10 +20,7 @@
         "nuxt",
         "nuxt3",
         "primevue",
-        "openvue",
-        "primevue nuxt module",
-        "primevue nuxt3",
-        "primevue 4"
+        "openvue"
     ],
     "type": "module",
     "sideEffects": false,

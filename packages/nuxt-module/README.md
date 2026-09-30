@@ -6,6 +6,8 @@
 
 - [Documentation](https://openvue.dev)
 
+OpenVue is not affiliated with PrimeTek or PrimeUI.
+
 ## Quick Setup
 
 1. Add `@openvue/nuxt-module` to the `modules` section of `nuxt.config.{ts,js}`

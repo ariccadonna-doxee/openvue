@@ -2,7 +2,7 @@
 
 ## Guides
 
-- [Introduction](https://openvue.dev/introduction): The Vue UI component library, continued.
+- [Introduction](https://openvue.dev/introduction): A community-maintained fork of PrimeVue for Vue 3 and Nuxt.
 - [Configuration](https://openvue.dev/configuration): Application wide configuration for OpenVue.
 - [Styled Mode](https://openvue.dev/styled): Choose from a variety of pre-styled themes or develop your own.
 - [Unstyled Mode](https://openvue.dev/unstyled): Theming OpenVue with alternative styling approaches.

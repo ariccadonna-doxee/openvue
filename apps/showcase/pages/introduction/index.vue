@@ -1,12 +1,12 @@
 <template>
-    <DocSeo title="Introduction - OpenVue" description="The Vue UI component library, continued." />
+    <DocSeo title="Introduction - OpenVue" description="A community-maintained fork of PrimeVue for Vue 3 and Nuxt." />
     <div class="doc">
         <div class="doc-main">
             <div class="doc-intro">
                 <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
                     <div class="flex-1">
                         <h1>Introduction</h1>
-                        <p>The Vue UI component library, continued.</p>
+                        <p>A community-maintained fork of PrimeVue for Vue 3 and Nuxt.</p>
                     </div>
                     <DocCopyMarkdown docType="page" class="flex-shrink-0" />
                 </div>

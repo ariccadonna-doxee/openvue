@@ -4,7 +4,8 @@ export default {
         title: { type: String, required: true },
         description: { type: String, required: true },
         jsonLd: { type: Object, default: null },
-        type: { type: String, default: 'article' }
+        type: { type: String, default: 'article' },
+        noindex: { type: Boolean, default: false }
     },
     setup(props) {
         const route = useRoute();
@@ -14,7 +15,8 @@ export default {
             description: props.description,
             path: route.path,
             type: props.type,
-            jsonLd: props.jsonLd
+            jsonLd: props.jsonLd,
+            noindex: props.noindex
         });
 
         return () => null;

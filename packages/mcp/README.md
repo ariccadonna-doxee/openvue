@@ -2,6 +2,8 @@
 
 Model Context Protocol (MCP) server for the [OpenVue](https://openvue.dev) component library. Provides AI assistants with comprehensive access to OpenVue component documentation, props, events, slots, theming, and code examples.
 
+OpenVue is not affiliated with PrimeTek or PrimeUI.
+
 ## What is MCP?
 
 [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) is an open standard that enables AI models to connect with external tools and data sources. By installing this MCP server, your AI assistant gains deep knowledge of OpenVue components and can provide accurate, up-to-date information while helping you build Vue.js applications.

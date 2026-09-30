@@ -2,6 +2,8 @@
 
 Codemod that migrates a PrimeVue project to [OpenVue](https://github.com/openvi-foundation/openvue). OpenVue keeps PrimeVue's public API unchanged (`usePrimeVue`, `PrimeVueResolver`, the `primevue` Nuxt config key, `p-` CSS classes, pass-through options), so migrating is a package rename — which is exactly and only what this tool does.
 
+OpenVue is not affiliated with PrimeTek or PrimeUI.
+
 ## Usage
 
 One command, from the root of your project (for monorepos, run it at the workspace root):

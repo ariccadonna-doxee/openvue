@@ -35,7 +35,7 @@ export default {
            library, and people looking for where PrimeVue went. The title names both. */
         useSeo({
             title: 'OpenVue - Vue UI Components, MIT PrimeVue Fork',
-            description: '80+ accessible, themeable components for Vue 3 and Nuxt. OpenVue continues PrimeVue 4.5.5 under the MIT license with the same API, themes and pass-through styling.',
+            description: '80+ accessible, themeable components for Vue 3 and Nuxt. OpenVue is a fork of PrimeVue 4.5.5, MIT licensed, with the same API, themes and pass-through styling.',
             path: '/',
             jsonLd: {
                 '@context': 'https://schema.org',
@@ -70,7 +70,7 @@ export default {
                         downloadUrl: 'https://www.npmjs.com/package/openvue',
                         softwareVersion: pkg.version,
                         license: 'https://opensource.org/licenses/MIT',
-                        description: 'MIT-licensed UI component library for Vue 3 and Nuxt, continuing PrimeVue 4.5.5.',
+                        description: 'MIT-licensed UI component library for Vue 3 and Nuxt, forked from PrimeVue 4.5.5.',
                         offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' }
                     }
                 ]

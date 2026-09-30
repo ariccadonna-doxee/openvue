@@ -14,13 +14,13 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-[**Documentation**](https://openvue.dev) · [**Setup**](https://openvue.dev/setup) · [**Playground**](https://openvue.dev/playground) · [**Migrate from PrimeVue**](https://openvue.dev/migrate) · [**Changelog**](CHANGELOG.md)
+[**Documentation**](https://openvue.dev) · [**Setup**](https://openvue.dev/setup) · [**Components**](https://openvue.dev/components) · [**Migrate from PrimeVue**](https://openvue.dev/migrate) · [**Changelog**](CHANGELOG.md)
 
 </div>
 
 ## About
 
-OpenVue is a community-maintained continuation of PrimeVue, one of the most widely adopted Vue.js component libraries, following its archival by the original maintainers. The project is stewarded by [openvi-foundation](https://github.com/openvi-foundation), an independent organization of experienced developers who use this library in production and are committed to keeping it maintained, stable, and open.
+OpenVue is a community-maintained fork of PrimeVue 4.5.5, one of the most widely adopted Vue.js component libraries, following its archival by the original maintainers. The project is stewarded by [openvi-foundation](https://github.com/openvi-foundation), an independent organization of experienced developers who use this library in production and are committed to keeping it maintained, stable, and open.
 
 OpenVue is not affiliated with PrimeTek or PrimeUI. We started this project because a library with this much adoption, and this many teams depending on it, deserves a maintenance path that isn't tied to any single company's plans.
 

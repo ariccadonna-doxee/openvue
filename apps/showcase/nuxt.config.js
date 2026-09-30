@@ -85,8 +85,9 @@ export default defineNuxtConfig({
         alias
     },
     sitemap: {
-        autoLastmod: true,
-        exclude: ['/llms/**'],
+        // A build-time lastmod stamps every URL with the same date on each deploy, which Google treats as unreliable and ignores.
+        autoLastmod: false,
+        exclude: ['/llms/**', '/primeclt'],
         defaults: {
             changefreq: 'weekly',
             priority: 0.7
@@ -110,17 +111,17 @@ export default defineNuxtConfig({
             meta: [
                 { charset: 'utf-8' },
                 { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-                { name: 'description', content: 'OpenVue is the MIT-licensed continuation of PrimeVue: 80+ accessible, themeable UI components for Vue 3 and Nuxt, with the same API you already know.' },
+                { name: 'description', content: 'OpenVue is an MIT-licensed fork of PrimeVue 4.5.5: 80+ accessible, themeable UI components for Vue 3 and Nuxt, with the same API you already know.' },
                 { name: 'robots', content: 'index,follow' },
                 { name: 'twitter:card', content: 'summary_large_image' },
                 { name: 'twitter:title', content: 'OpenVue | Vue UI Component Library' },
-                { name: 'twitter:description', content: 'OpenVue is the MIT-licensed continuation of PrimeVue: 80+ accessible, themeable UI components for Vue 3 and Nuxt, with the same API you already know.' },
+                { name: 'twitter:description', content: 'OpenVue is an MIT-licensed fork of PrimeVue 4.5.5: 80+ accessible, themeable UI components for Vue 3 and Nuxt, with the same API you already know.' },
                 { name: 'twitter:image', content: 'https://openvue.dev/og-image.png' },
                 { property: 'og:type', content: 'website' },
                 { property: 'og:site_name', content: 'OpenVue' },
                 { property: 'og:title', content: 'OpenVue | Vue UI Component Library' },
                 { property: 'og:url', content: 'https://openvue.dev/' },
-                { property: 'og:description', content: 'OpenVue is the MIT-licensed continuation of PrimeVue: 80+ accessible, themeable UI components for Vue 3 and Nuxt, with the same API you already know.' },
+                { property: 'og:description', content: 'OpenVue is an MIT-licensed fork of PrimeVue 4.5.5: 80+ accessible, themeable UI components for Vue 3 and Nuxt, with the same API you already know.' },
                 { property: 'og:image', content: 'https://openvue.dev/og-image.png' },
                 { property: 'og:image:width', content: '1200' },
                 { property: 'og:image:height', content: '630' },

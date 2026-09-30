@@ -1,5 +1,5 @@
 <template>
-    <DocSeo title="Install OpenVue with PrimeCLT" description="Install OpenVue with PrimeCLT" />
+    <DocSeo title="Install OpenVue with PrimeCLT" description="Install OpenVue with PrimeCLT" noindex />
     <div class="doc">
         <div class="doc-main">
             <div class="doc-intro">

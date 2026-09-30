@@ -3,7 +3,7 @@
 
 # OpenVue
 
-OpenVue is a community-maintained continuation of PrimeVue, a rich set of open source UI components for Vue. It is not affiliated with PrimeTek or PrimeUI. See the [main repository](https://github.com/openvi-foundation/openvue) for background on the fork.
+OpenVue is a community-maintained fork of PrimeVue 4.5.5, a rich set of open source UI components for Vue. It is not affiliated with PrimeTek or PrimeUI. See the [main repository](https://github.com/openvi-foundation/openvue) for background on the fork.
 
 Visit [openvue.dev](https://openvue.dev) for the website, documentation, and roadmap.
 

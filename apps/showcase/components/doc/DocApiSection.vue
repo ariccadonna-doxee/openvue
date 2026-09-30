@@ -1,7 +1,7 @@
 <template>
     <div class="doc-main">
         <div class="doc-intro">
-            <h1>{{ header }} API</h1>
+            <h2 class="text-[1.75rem]">{{ header }} API</h2>
             <p>{{ description }}</p>
         </div>
         <DocSections :docs="docs" />
