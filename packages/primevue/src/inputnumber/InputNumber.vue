@@ -947,7 +947,12 @@ export default {
                     selectionEnd = sRegex.lastIndex + tRegex.lastIndex;
                     this.$refs.input.$el.setSelectionRange(selectionEnd, selectionEnd);
                 } else if (newLength === currentLength) {
-                    if (operation === 'insert' || operation === 'delete-back-single') {
+                    if (operation === 'insert') {
+                        const droppedLength = valueStr ? Math.max(0, valueStr.length - newLength) : 0;
+
+                        selectionEnd = selectionEnd + 1 - droppedLength;
+                        this.$refs.input.$el.setSelectionRange(selectionEnd, selectionEnd);
+                    } else if (operation === 'delete-back-single') {
                         this.$refs.input.$el.setSelectionRange(selectionEnd + 1, selectionEnd + 1);
                     } else if (operation === 'delete-single') {
                         this.$refs.input.$el.setSelectionRange(selectionEnd - 1, selectionEnd - 1);

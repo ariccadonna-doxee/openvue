@@ -7,8 +7,6 @@ name: Contributors
 # Everyone else (bug reporters with no linked PR, designers, translators) is
 # added by hand: npx all-contributors-cli@6 add <login> <types>
 #
-# SAFETY: pull_request_target gives fork PRs a write-capable token. Never check
-# out or run the PR's code here. Base branch only.
 
 on:
     pull_request_target:
@@ -128,6 +126,11 @@ jobs:
                   PRIVATE_TOKEN: ${{ secrets.GITHUB_TOKEN }} # what all-contributors-cli authenticates with
               run: |
                   echo "$PEOPLE" | jq -r '.[] | "\(.login) \(.types)"' | while read -r login types; do
+                      # `add` replaces an existing contributor's types instead of merging them.
+                      types=$(jq -r --arg login "$login" --arg types "$types" \
+                          '[.contributors[] | select(.login == $login) | .contributions[]] as $old | $old + (($types | split(",")) - $old) | join(",")' \
+                          .all-contributorsrc)
+
                       echo "Adding $login ($types)"
                       npx --yes all-contributors-cli@6 add "$login" "$types"
                   done

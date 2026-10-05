@@ -292,4 +292,81 @@ describe('InputNumber.vue', () => {
         expect(wrapper.vm.isValueChanged(10.5, '10.6')).toBe(true);
         expect(wrapper.vm.isValueChanged(null, '1')).toBe(true);
     });
+
+    describe('typing over initial zero', () => {
+        const type = async (input, key) => {
+            await wrapper.vm.onInputKeyPress({ key, preventDefault: () => {} });
+
+            return { value: input.value, caret: input.selectionStart };
+        };
+
+        it('should keep multi char suffix when typing digits after zero', async () => {
+            await wrapper.setProps({ modelValue: 0, suffix: ' kg' });
+
+            const input = wrapper.find('input.p-inputnumber-input').element;
+
+            expect(input.value).toBe('0 kg');
+
+            input.setSelectionRange(1, 1);
+
+            expect(await type(input, '1')).toEqual({ value: '1 kg', caret: 1 });
+            expect(await type(input, '2')).toEqual({ value: '12 kg', caret: 2 });
+            expect(await type(input, '3')).toEqual({ value: '123 kg', caret: 3 });
+            expect(wrapper.emitted().input.map(([e]) => e.value)).toEqual([1, 12, 123]);
+        });
+
+        it('should keep multi char prefix and suffix when typing digits after zero', async () => {
+            await wrapper.setProps({ modelValue: 0, prefix: '$ ', suffix: ' kg' });
+
+            const input = wrapper.find('input.p-inputnumber-input').element;
+
+            expect(input.value).toBe('$ 0 kg');
+
+            input.setSelectionRange(3, 3);
+
+            expect(await type(input, '1')).toEqual({ value: '$ 1 kg', caret: 3 });
+            expect(await type(input, '2')).toEqual({ value: '$ 12 kg', caret: 4 });
+            expect(wrapper.emitted().input.map(([e]) => e.value)).toEqual([1, 12]);
+        });
+
+        it('should keep typing into the integer part of a currency value', async () => {
+            await wrapper.setProps({ modelValue: 0, mode: 'currency', currency: 'USD', locale: 'en-US' });
+
+            const input = wrapper.find('input.p-inputnumber-input').element;
+
+            expect(input.value).toBe('$0.00');
+
+            input.setSelectionRange(2, 2);
+
+            expect(await type(input, '1')).toEqual({ value: '$1.00', caret: 2 });
+            expect(await type(input, '2')).toEqual({ value: '$12.00', caret: 3 });
+            expect(await type(input, '5')).toEqual({ value: '$125.00', caret: 4 });
+            expect(await type(input, '0')).toEqual({ value: '$1,250.00', caret: 6 });
+            expect(wrapper.emitted().input.map(([e]) => e.value)).toEqual([1, 12, 125, 1250]);
+        });
+
+        it('should place caret after typed digit with single char suffix', async () => {
+            await wrapper.setProps({ modelValue: 0, suffix: '%' });
+
+            const input = wrapper.find('input.p-inputnumber-input').element;
+
+            input.setSelectionRange(1, 1);
+
+            expect(await type(input, '1')).toEqual({ value: '1%', caret: 1 });
+            expect(await type(input, '2')).toEqual({ value: '12%', caret: 2 });
+        });
+
+        it('should still advance caret when overwriting fraction digits', async () => {
+            await wrapper.setProps({ modelValue: 1, minFractionDigits: 2, maxFractionDigits: 2, locale: 'en-US', suffix: ' kg' });
+
+            const input = wrapper.find('input.p-inputnumber-input').element;
+
+            expect(input.value).toBe('1.00 kg');
+
+            input.setSelectionRange(2, 2);
+
+            expect(await type(input, '5')).toEqual({ value: '1.50 kg', caret: 3 });
+            expect(await type(input, '7')).toEqual({ value: '1.57 kg', caret: 4 });
+        });
+    });
 });

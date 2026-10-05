@@ -85,6 +85,27 @@
             "avatar_url": "https://avatars.githubusercontent.com/u/93262194?v=4",
             "profile": "https://caddev.info/",
             "contributions": ["ideas"]
+        },
+        {
+            "login": "Jacobs63",
+            "name": "Jakub Potocký",
+            "avatar_url": "https://avatars.githubusercontent.com/u/16275303?v=4",
+            "profile": "https://jakubpotocky.sk/",
+            "contributions": ["code"]
+        },
+        {
+            "login": "posti85",
+            "name": "José Antonio Postigo",
+            "avatar_url": "https://avatars.githubusercontent.com/u/17066163?v=4",
+            "profile": "https://github.com/posti85",
+            "contributions": ["bug"]
+        },
+        {
+            "login": "AntekOlszewski",
+            "name": "AntekOlszewski",
+            "avatar_url": "https://avatars.githubusercontent.com/u/73691558?v=4",
+            "profile": "https://github.com/AntekOlszewski",
+            "contributions": ["code"]
         }
     ]
 }
