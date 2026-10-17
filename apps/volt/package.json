@@ -37,7 +37,6 @@
         "typecheck": "vue-tsc --noEmit"
     },
     "dependencies": {
-        "@docsearch/js": "catalog:app",
         "primeicons": "catalog:",
         "openvue": "workspace:*",
         "chart.js": "catalog:app",

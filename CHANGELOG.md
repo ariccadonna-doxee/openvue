@@ -12,7 +12,14 @@ All packages in this repository are released together under a single version.
 
 - `InputNumber` no longer rounds the value you type. A number past `Number.MAX_SAFE_INTEGER` is emitted as an exact decimal string instead of a rounded number, every other value is still emitted as a number, and the emitted value always matches what the field shows. ([#490](https://github.com/openvi-foundation/openvue/issues/490))
 - Fix populating time in DatePicker when using 24-hour format
+- `DatePicker` previous and next buttons now tell screen reader users where they navigate to, e.g. "Next Month, November 2026" instead of just "Next Month". The labels reuse existing locale keys, so translations need no changes. ([#679](https://github.com/openvi-foundation/openvue/pull/679))
+- `DatePicker` time picker now announces the new time to screen readers when the hour, minute, second or AM/PM changes. ([#679](https://github.com/openvi-foundation/openvue/pull/679))
+- `InputChips` no longer types the separator into the input when a duplicate chip is rejected. ([#602](https://github.com/openvi-foundation/openvue/issues/602))
 - `InputNumber` no longer changes the number you type after an initial `0`. With a suffix such as `" kg"` the second digit cleared the field, and in currency fields typing `1250` into `$0.00` gave `$1.25`. Contributed by [@AntekOlszewski](https://github.com/AntekOlszewski). ([#665](https://github.com/openvi-foundation/openvue/pull/665))
+- Fix InputMask update:modelValue emitting stale value upon clearing when unmask is set to true.
+- Inputs inside a `Form` with `initialValues` no longer jump back to the initial value when cleared. ([#686](https://github.com/openvi-foundation/openvue/pull/686))
+- Pressing tab no longer toggles options in MultiSelect. Tabbing past a MultiSelect after mount doesn't toggle the first option anymore either.
+- `Tree` lazy loading now works while filtering: `node-expand` and `node-collapse` pass the node from `value` instead of a filtered copy. ([#585](https://github.com/openvi-foundation/openvue/issues/585))
 
 ## [1.0.0] - 2026-09-10
 
