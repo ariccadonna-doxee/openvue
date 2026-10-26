@@ -96,12 +96,13 @@ export default {
     container: null,
     data() {
         return {
-            /* Templates live on their own site, so that entry leaves the showcase. */
+            /* OpenVolt and Templates live on their own sites, so those entries leave the showcase. */
             navLinks: [
                 { label: 'Docs', to: '/introduction', panel: 'docs', icon: 'pi pi-book' },
                 { label: 'Components', to: '/components', panel: 'components', icon: 'pi pi-th-large' },
                 { label: 'Migration', to: '/migrate', icon: 'pi pi-arrow-right-arrow-left' },
-                { label: 'Templates', href: 'https://deni.openvue.dev/', icon: 'pi pi-desktop' }
+                { label: 'Templates', href: 'https://deni.openvue.dev/', icon: 'pi pi-desktop' },
+                { label: 'OpenVolt', href: 'https://openvolt.openvue.dev/', icon: 'pi pi-bolt' }
             ],
             mobileMenuActive: false
         };

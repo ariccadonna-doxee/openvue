@@ -8,6 +8,12 @@ All packages in this repository are released together under a single version.
 
 ## [Unreleased]
 
+- Volt UI fork of OpenVue
+
+### Added
+
+- New `openvolt-vue` CLI. `npx openvolt-vue add Button` copies OpenVolt components into your project. The components ship inside the package, so they always match your openvue version.
+
 ### Fixed
 
 - `InputNumber` no longer rounds the value you type. A number past `Number.MAX_SAFE_INTEGER` is emitted as an exact decimal string instead of a rounded number, every other value is still emitted as a number, and the emitted value always matches what the field shows. ([#490](https://github.com/openvi-foundation/openvue/issues/490))
